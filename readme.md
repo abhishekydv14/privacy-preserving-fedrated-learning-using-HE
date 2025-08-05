@@ -1,132 +1,113 @@
-# Privacy-Preserving Federated Learning Using Homomorphic Encryption
+Privacy-Preserving Federated Learning Using Homomorphic Encryption
+<div align="center">
 
-This project demonstrates a privacy-preserving federated learning (FL) system using **Homomorphic Encryption (HE)**, focusing on a **Privacy-Enhanced Multi-Layer Perceptron (PEMLP)** model. The system enables secure model aggregation without revealing the raw local model weights or training data.
+</div>
 
-> 🔐 **Federated Learning + Homomorphic Encryption = Secure & Private Model Training**
+This project demonstrates a privacy-preserving federated learning (FL) system using Homomorphic Encryption (HE). It features a Privacy-Enhanced Multi-Layer Perceptron (PEMLP) model, enabling multiple clients to collaboratively train a global model without revealing their raw data or local model updates to a central server.
 
----
+🔐 Federated Learning + Homomorphic Encryption = Secure & Private Model Training
+The core idea is to perform model aggregation on encrypted parameters, ensuring that the server can combine knowledge from all clients without ever seeing the individual contributions in plaintext.
 
-## 🧠 Project Highlights
+🧠 Project Highlights
+Secure Aggregation: Implements the Federated Averaging (FedAvg) algorithm where client model weights are encrypted before transmission.
 
-- Implements **Federated Averaging (FedAvg)** using encrypted weights.
-- Uses **CKKS homomorphic encryption scheme** (via [TenSEAL](https://github.com/OpenMined/TenSEAL)).
-- Trains **local MLP models** on simulated clients using **PyTorch**.
-- Aggregates encrypted model weights on the server without decryption.
-- Supports binary classification on synthetic/tabular datasets.
+Homomorphic Encryption: Uses the CKKS (Cheon-Kim-Kim-Song) scheme via the TenSEAL library to perform computations on encrypted data.
 
----
+Local Training: Trains local Multi-Layer Perceptron (MLP) models on simulated, distributed client datasets using PyTorch.
 
-## 🛠️ Technologies Used
+Server-Side Operations: The central server aggregates the encrypted model weights without needing the decryption key.
 
-- 🐍 Python 3
-- 🔐 [TenSEAL](https://github.com/OpenMined/TenSEAL) – for homomorphic encryption
-- 🔦 PyTorch – for model building and training
-- 📊 NumPy, Scikit-learn – for data generation and preprocessing
-- 📓 Jupyter Notebook
+Classification Task: Designed for binary classification on synthetic tabular data.
 
----
+🛠️ Technologies Used
+Python 3
 
-## 📁 Project Structure
+TenSEAL: For homomorphic encryption operations.
 
+PyTorch: For building and training the neural network models.
+
+NumPy & Scikit-learn: For data generation, manipulation, and evaluation.
+
+Jupyter Notebook: For interactive demonstration and visualization.
+
+📁 Project Structure
 privacy-preserving-fedrated-learning-using-HE/
 │
-├── PEMLP_implemantation.ipynb # Main notebook with FL and HE implementation
-├── README.md # Project documentation (this file)
-└── requirements.txt # List of dependencies (optional, see below)
+├── PEMLP_implemantation.ipynb    # Main notebook with FL and HE implementation
+├── README.md                     # Project documentation (this file)
+└── requirements.txt              # List of dependencies
+🚀 How It Works
+The system follows a standard federated learning workflow, augmented with homomorphic encryption at the communication step.
 
-yaml
-Copy
-Edit
+<p align="center">
+<img src="https://i.imgur.com/gKRAMYm.png" alt="Workflow Diagram" width="800"/>
+</p>
 
----
+Initialization: A global model is initialized on the server. Synthetic classification data is generated and distributed among multiple clients.
 
-## 🚀 How It Works
+Local Training: Each client trains its local MLP model on its partition of the data for a few epochs.
 
-1. **Dataset Creation**  
-   Synthetic classification data is generated using `sklearn.datasets.make_classification`.
+Encryption: Before sending the updated model weights to the server, each client encrypts them using a public HE key.
 
-2. **Client Initialization**  
-   Data is split among multiple clients, each training its own MLP model locally.
+Secure Aggregation: The server receives the encrypted weights from all clients. It performs Federated Averaging by summing the encrypted weight tensors and dividing by the number of clients—all without decryption.
 
-3. **Local Training**  
-   Each client trains for a few epochs on its local data.
+Decryption & Update: The resulting aggregated (and still encrypted) global model weights are sent back to the clients (or decrypted by a trusted entity). For this simulation, we decrypt the final model at the end of all rounds to evaluate its performance.
 
-4. **Encryption**  
-   Model weights are encrypted using CKKS before being sent to the server.
+🧪 Getting Started
+Prerequisites
+Python 3.8+
 
-5. **Aggregation**  
-   The server performs Federated Averaging directly on encrypted weights.
+CMake (may be required for TenSEAL installation)
 
-6. **Decryption and Evaluation**  
-   Final global weights are decrypted and used for evaluation.
-
----
-
-## 📷 Sample Output
-
-Some metrics visualized in the notebook:
-
-- Accuracy comparison between plaintext and encrypted models
-- Weight convergence graphs
-- Communication rounds and training loss
-
----
-
-## 🧪 Requirements
-
-Install the required packages using:
-
-```bash
-pip install torch scikit-learn tenseal numpy matplotlib
-Note: TenSEAL may require CMake and PyTorch version compatibility. Refer to TenSEAL installation guide if issues arise.
-
-▶️ Running the Notebook
+Installation
 Clone the repository:
 
-bash
-Copy
-Edit
+Bash
+
 git clone https://github.com/abhishekydv14/privacy-preserving-fedrated-learning-using-HE.git
 cd privacy-preserving-fedrated-learning-using-HE
+Install the required packages:
+It is recommended to use a virtual environment.
+
+Bash
+
+pip install -r requirements.txt
+Alternatively, you can install packages manually:
+
+Bash
+
+pip install torch scikit-learn tenseal numpy matplotlib
+⚠️ Note on TenSEAL Installation:
+TenSEAL's installation can be tricky due to its C++ backend. Ensure your PyTorch version is compatible. If you encounter issues, please consult the official TenSEAL installation guide.
+
+▶️ Running the Notebook
 Launch Jupyter Notebook:
 
-bash
-Copy
-Edit
-jupyter notebook PEMLP_implemantation.ipynb
-Run the cells in order to see FL + HE in action.
+Bash
 
-🔒 Why Homomorphic Encryption?
-Homomorphic Encryption allows computations on encrypted data without needing to decrypt it. This makes it ideal for federated learning where privacy of user data and model parameters is critical.
+jupyter notebook
+Open and Run:
+Open the PEMLP_implemantation.ipynb notebook and run the cells in order to see the simulation in action. The notebook includes visualizations of model accuracy, weight convergence, and training loss.
 
 📌 Future Work
-Add support for real-world datasets like MNIST or CIFAR-10.
+[ ] Add support for real-world datasets like MNIST or CIFAR-10.
 
-Extend to CNNs and other deep models.
+[ ] Extend the implementation to Convolutional Neural Networks (CNNs) and other complex architectures.
 
-Benchmark against Differential Privacy (DP).
+[ ] Benchmark performance and privacy guarantees against other techniques like Differential Privacy (DP).
 
-Improve performance and scalability.
+[ ] Optimize the encryption/decryption process to improve scalability and reduce computational overhead.
 
 🤝 Acknowledgements
-OpenMined for TenSEAL
+The OpenMined community for developing and maintaining TenSEAL.
 
-PyTorch community
+The PyTorch team for their excellent deep learning framework.
 
-Inspired by research in privacy-preserving machine learning
+The broader research community in privacy-preserving machine learning whose work inspired this project.
 
 📜 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ✍️ Author
 Abhishek Kumar Yadav
-IIIT Allahabad | M.Tech in Network Security
-🔗 GitHub
-
-yaml
-Copy
-Edit
-
----
-
-Let me know if you’d like a version with installation instructions for Google Colab or want badges (
+M.Tech in Information Security @ IIIT Allahabad
